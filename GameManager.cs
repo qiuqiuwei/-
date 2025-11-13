@@ -1,11 +1,12 @@
 ﻿using MusicGame.Core;
-using MusicGame.SelectMusic; // 关键修复：添加RuntimeData所在命名空间
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityDebug = UnityEngine.Debug; // 解决Debug歧义
+using UnityDebug = UnityEngine.Debug;
+using RuntimeDataNS = MusicGame.SelectMusic.Utils.RuntimeData; // 修正RuntimeData命名空间别名
+using GameConstNS = MusicGame.SelectMusic.Utils.GameConst; // 修正GameConst命名空间别名
 using Utils = MusicGame.SelectMusic.Utils; // 明确Utils命名空间
 
 namespace MusicGame.Game
@@ -53,9 +54,9 @@ namespace MusicGame.Game
 
         private void LoadSelectedData()
         {
-            // 关键修复：RuntimeData来自MusicGame.SelectMusic命名空间
-            selectedMusic = RuntimeData.selectedMusic;
-            selectedBeatmap = RuntimeData.selectedBeatmap;
+            // 修正RuntimeData引用
+            selectedMusic = RuntimeDataNS.selectedMusic;
+            selectedBeatmap = RuntimeDataNS.selectedBeatmap;
 
             if (selectedMusic == null)
             {
@@ -86,12 +87,27 @@ namespace MusicGame.Game
                 return;
             }
 
-            var musicClip = Utils.LoadAudio(selectedMusic.audioFilename);
-            if (musicClip == null)
+            // 修正方法名：LoadAudioAsync
+            var audioRequest = Utils.LoadAudioAsync(selectedMusic.audioFilename);
+            if (audioRequest == null)
             {
                 UnityDebug.LogError($"[GameManager] 加载音乐失败: {selectedMusic.audioFilename}");
                 BackToSelectScene();
                 return;
+            }
+
+            StartCoroutine(WaitForAudioLoad(audioRequest));
+        }
+
+        private IEnumerator WaitForAudioLoad(ResourceRequest audioRequest)
+        {
+            yield return audioRequest;
+            var musicClip = audioRequest.asset as AudioClip;
+            if (musicClip == null)
+            {
+                UnityDebug.LogError("[GameManager] 音乐加载失败（资源类型错误）");
+                BackToSelectScene();
+                yield break;
             }
 
             musicAudioSource.clip = musicClip;
@@ -181,13 +197,8 @@ namespace MusicGame.Game
 
         private void BackToSelectScene()
         {
-            StartCoroutine(DelayLoadScene("SelectMusic", 1f));
-        }
-
-        private IEnumerator DelayLoadScene(string sceneName, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            SceneManager.LoadScene(sceneName);
+            // 修正场景切换方式：使用Utils.FadeOut
+            Utils.FadeOut(1f, () => SceneManager.LoadScene("SelectMusic"));
         }
     }
 }

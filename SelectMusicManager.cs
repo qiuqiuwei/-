@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // 引入UI命名空间
-using UIImage = UnityEngine.UI.Image; // 定义别名
-using UIText = UnityEngine.UI.Text;   // 定义别名
+using UnityEngine.UI;
 using Model = MusicGame.SelectMusic.Model;
-using Utils = MusicGame.SelectMusic.Utils;
+using RuntimeDataNS = MusicGame.SelectMusic.Utils.RuntimeData;
+using GameConstNS = MusicGame.SelectMusic.Utils.GameConst; // 新增GameConst命名空间别名
 using UnityDebug = UnityEngine.Debug;
+using Utils = MusicGame.SelectMusic.Utils;
 
 namespace MusicGame.SelectMusic.Manager
 {
@@ -19,7 +21,7 @@ namespace MusicGame.SelectMusic.Manager
         private Coroutine playMusicCoroutine;
 
         [Header("UI引用")]
-        [SerializeField] private UIImage bannerBackground;
+        [SerializeField] private UnityEngine.UI.Image bannerBackground;
         [SerializeField] private GameObject musicUIGroup;
         [SerializeField] private GameObject musicUIItemPrefab;
 
@@ -54,7 +56,7 @@ namespace MusicGame.SelectMusic.Manager
             canvasTransform = GameObject.Find("Canvas")?.transform;
             if (canvasTransform != null) canvasBasePosition = canvasTransform.position;
             backgroundAlpha = bannerBackground?.color.a ?? 1f;
-            focusIndex = Mathf.Clamp(MusicGame.SelectMusic.RuntimeData.selectedMusicIndex, 0, int.MaxValue);
+            focusIndex = Mathf.Clamp(RuntimeDataNS.selectedMusicIndex, 0, int.MaxValue);
         }
 
         void Start() { LoadMusicList(); InitMusicGroup(); }
@@ -68,10 +70,10 @@ namespace MusicGame.SelectMusic.Manager
         private void LoadMusicList()
         {
             musicList.Clear();
-            TextAsset[] assets = Resources.LoadAll<TextAsset>(Model.GameConst.BEATMAP_PATH);
+            TextAsset[] assets = Resources.LoadAll<TextAsset>(GameConstNS.BEATMAP_PATH); // 修正GameConst引用
             if (assets == null || assets.Length == 0)
             {
-                UnityDebug.LogError($"未找到谱面资源，路径：{Model.GameConst.BEATMAP_PATH}");
+                UnityDebug.LogError($"未找到谱面资源，路径：{GameConstNS.BEATMAP_PATH}");
                 return;
             }
 
@@ -108,7 +110,7 @@ namespace MusicGame.SelectMusic.Manager
             }
 
             focusIndex = Mathf.Clamp(focusIndex, 0, musicList.Count - 1);
-            MusicGame.SelectMusic.RuntimeData.selectedMusicIndex = focusIndex;
+            RuntimeDataNS.selectedMusicIndex = focusIndex;
 
             for (int i = 0; i < musicList.Count; i++)
             {
@@ -146,11 +148,11 @@ namespace MusicGame.SelectMusic.Manager
                 transform = itemGameObject.transform
             };
 
-            item.albumImage = item.transform.Find("AlbumBackground/AlbumImage")?.GetComponent<UIImage>();
+            item.albumImage = item.transform.Find("AlbumBackground/AlbumImage")?.GetComponent<UnityEngine.UI.Image>();
             item.textGroup = item.transform.Find("TextGroup")?.GetComponent<CanvasGroup>();
-            item.titleLabel = item.transform.Find("TextGroup/TitleBackground/TitleLabel")?.GetComponent<UIText>();
-            item.artistLabel = item.transform.Find("TextGroup/ArtistBackground/ArtistLabel")?.GetComponent<UIText>();
-            item.difficultyLabel = item.transform.Find("TextGroup/DifficultyBackground/DifficultyLabel")?.GetComponent<UIText>();
+            item.titleLabel = item.transform.Find("TextGroup/TitleBackground/TitleLabel")?.GetComponent<UnityEngine.UI.Text>();
+            item.artistLabel = item.transform.Find("TextGroup/ArtistBackground/ArtistLabel")?.GetComponent<UnityEngine.UI.Text>();
+            item.difficultyLabel = item.transform.Find("TextGroup/DifficultyBackground/DifficultyLabel")?.GetComponent<UnityEngine.UI.Text>();
 
             if (item.albumImage == null || item.titleLabel == null || item.artistLabel == null || item.difficultyLabel == null)
             {
@@ -198,9 +200,9 @@ namespace MusicGame.SelectMusic.Manager
                 return;
             }
 
-            int safeBeatmapIndex = Mathf.Clamp(MusicGame.SelectMusic.RuntimeData.selectedBeatmapIndex, 0, music.beatmapList.Count - 1);
+            int safeBeatmapIndex = Mathf.Clamp(RuntimeDataNS.selectedBeatmapIndex, 0, music.beatmapList.Count - 1);
             item.beatmapIndex = safeBeatmapIndex;
-            MusicGame.SelectMusic.RuntimeData.selectedBeatmapIndex = safeBeatmapIndex;
+            RuntimeDataNS.selectedBeatmapIndex = safeBeatmapIndex;
 
             item.difficultyLabel.text = music.beatmapList[safeBeatmapIndex].difficultyName;
             item.difficultyLabel.color = music.beatmapList[safeBeatmapIndex].difficultyDisplayColor.ToColor();
@@ -309,7 +311,7 @@ namespace MusicGame.SelectMusic.Manager
             bannerBackground.DOFade(0, swipeTransitionDuration).SetEase(Ease.OutQuad);
 
             focusIndex = nextFocus;
-            MusicGame.SelectMusic.RuntimeData.selectedMusicIndex = focusIndex;
+            RuntimeDataNS.selectedMusicIndex = focusIndex;
         }
 
         private IEnumerator LoadAsyncAndPlay(Model.Music music)
@@ -372,7 +374,7 @@ namespace MusicGame.SelectMusic.Manager
                 currentItem.difficultyLabel.DOFade(1, 0.3f).SetEase(Ease.OutQuad).OnComplete(() =>
                 {
                     changingDifficulty = false;
-                    MusicGame.SelectMusic.RuntimeData.selectedBeatmapIndex = newIndex;
+                    RuntimeDataNS.selectedBeatmapIndex = newIndex;
                 });
             });
         }
@@ -398,10 +400,10 @@ namespace MusicGame.SelectMusic.Manager
             MusicUIItem focusItem = musicUIItemList[focusIndex];
             int beatmapIndex = Mathf.Clamp(focusItem.beatmapIndex, 0, selectedMusic.beatmapList.Count - 1);
 
-            MusicGame.SelectMusic.RuntimeData.selectedMusic = selectedMusic;
-            MusicGame.SelectMusic.RuntimeData.selectedBeatmap = selectedMusic.beatmapList[beatmapIndex];
-            MusicGame.SelectMusic.RuntimeData.selectedMusicIndex = focusIndex;
-            MusicGame.SelectMusic.RuntimeData.selectedBeatmapIndex = beatmapIndex;
+            RuntimeDataNS.selectedMusic = selectedMusic;
+            RuntimeDataNS.selectedBeatmap = selectedMusic.beatmapList[beatmapIndex];
+            RuntimeDataNS.selectedMusicIndex = focusIndex;
+            RuntimeDataNS.selectedBeatmapIndex = beatmapIndex;
 
             Utils.FadeOut(1f, () => SceneManager.LoadScene("Game"));
         }
@@ -426,10 +428,10 @@ namespace MusicGame.SelectMusic.Manager
         public Transform transform;
         public Model.Music music;
         public int beatmapIndex;
-        public UIImage albumImage;
+        public UnityEngine.UI.Image albumImage;
         public CanvasGroup textGroup;
-        public UIText titleLabel;
-        public UIText artistLabel;
-        public UIText difficultyLabel;
+        public UnityEngine.UI.Text titleLabel;
+        public UnityEngine.UI.Text artistLabel;
+        public UnityEngine.UI.Text difficultyLabel;
     }
 }

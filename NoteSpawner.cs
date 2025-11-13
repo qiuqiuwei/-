@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using UnityEngine;
-using Model = MusicGame.SelectMusic.Model; // 统一Model命名空间
-using MusicGame.Game; // 关键修复：引入NoteController所在命名空间
-using UnityDebug = UnityEngine.Debug; // 解决Debug歧义
+using CoreNote = MusicGame.Core.Note; // 明确引用正确的Note类型命名空间
+using MusicGame.Game;
+using UnityDebug = UnityEngine.Debug;
 
 public class NoteSpawner : MonoBehaviour
 {
@@ -15,19 +15,19 @@ public class NoteSpawner : MonoBehaviour
     {
         musicStartTime = Time.time;
 
-        // 测试音符生成（Model.Note来自Model命名空间）
-        Model.Note testNote = new Model.Note
+        // 初始化测试音符（使用CoreNote类型）
+        CoreNote testNote = new CoreNote
         {
             x = 3,
             time = 2f,
-            type = Model.NoteType.Circle
+            type = CoreNote.NoteType.Circle // 确保枚举名称与Core.Note一致
         };
 
         SpawnNote(testNote);
     }
 
-    // 生成音符（参数为Model.Note）
-    public void SpawnNote(Model.Note noteData)
+    // 生成音符（参数为CoreNote类型）
+    public void SpawnNote(CoreNote noteData)
     {
         if (notePrefab == null)
         {
@@ -36,8 +36,7 @@ public class NoteSpawner : MonoBehaviour
         }
 
         GameObject noteObj = Instantiate(notePrefab);
-        // 关键修复：NoteController来自MusicGame.Game命名空间
-        var noteController = noteObj.GetComponent<NoteController>();
+        NoteController noteController = noteObj.GetComponent<NoteController>();
         if (noteController == null)
         {
             UnityDebug.LogError("音符预制体未挂载NoteController脚本！");
@@ -45,7 +44,7 @@ public class NoteSpawner : MonoBehaviour
             return;
         }
 
-        // 计算生成位置（按轨道编号分配X坐标）
+        // 计算生成位置
         Vector3 spawnPos = new Vector3(GetTrackXPosition(noteData.x), 0, judgeLinePosition.z + 10f);
         noteObj.transform.position = spawnPos;
 
@@ -59,7 +58,6 @@ public class NoteSpawner : MonoBehaviour
         );
     }
 
-    // 根据轨道编号获取X坐标
     private float GetTrackXPosition(int trackNumber)
     {
         return trackNumber switch
@@ -75,7 +73,6 @@ public class NoteSpawner : MonoBehaviour
         };
     }
 
-    // 音符判定回调
     private void OnNoteJudged(int trackIndex, float accuracy)
     {
         string judgeResult = accuracy switch

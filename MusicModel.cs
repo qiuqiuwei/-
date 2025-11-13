@@ -1,21 +1,31 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MusicGame.SelectMusic.Model
 {
+    /// <summary>
+    /// ��������ö�٣�ȫ��Ψһ���壩
+    /// </summary>
     public enum NoteType
     {
-        Circle,
-        Slider,
-        Spinner,
-        Unknown
+        Circle,   // ��������
+        Slider,   // ����
+        Spinner,  // ��ת
+        Hit,      // ����
+        Slide,    // ���ݾ�����
+        Unknown   // δ֪���ͣ���ѡ��չ��
     }
 
+    /// <summary>
+    /// ������ɫģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// </summary>
     [Serializable]
     public class SimpleColor
     {
         public float r, g, b, a;
+
+        public SimpleColor() { }
 
         public SimpleColor(Color color)
         {
@@ -28,6 +38,9 @@ namespace MusicGame.SelectMusic.Model
         }
     }
 
+    /// <summary>
+    /// ��������ģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// </summary>
     [Serializable]
     public class Note
     {
@@ -35,11 +48,16 @@ namespace MusicGame.SelectMusic.Model
         public int y;
         public float time;
         public NoteType type;
-        public float length;
-        public int repeat;
-        public float endTime;
+        public float speed;        // �����ƶ��ٶȣ���Coreģ�����ݣ�
+        public SimpleColor color;  // ������ʾ��ɫ����Coreģ�����ݣ�
+        public float length;       // ����/�������ȣ�Sliderר�ã�
+        public int repeat;         // �����ظ�������Sliderר�ã�
+        public float endTime;      // ����ʱ�䣨Spinnerר�ã�
     }
 
+    /// <summary>
+    /// ����ģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// </summary>
     [Serializable]
     public class Beatmap
     {
@@ -47,9 +65,13 @@ namespace MusicGame.SelectMusic.Model
         public SimpleColor difficultyDisplayColor;
         public string creator;
         public string version;
+        public int difficulty;     // �Ѷ���ֵ����Coreģ�����ݣ�
         public List<Note> noteList = new List<Note>();
     }
 
+    /// <summary>
+    /// ����ģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// </summary>
     [Serializable]
     public class Music
     {

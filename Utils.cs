@@ -1,11 +1,11 @@
 ﻿using DG.Tweening;
 using System;
-using System;
 using System.Collections;
 using UnityEngine;
-using DG.Tweening;
-using UnityEngine.UI; // 引入UI命名空间
-using UIImage = UnityEngine.UI.Image; // 定义别名
+using UnityEngine.UI;
+using UIImage = UnityEngine.UI.Image;
+using GameConstNS = MusicGame.SelectMusic.Utils.GameConst; // 修正GameConst命名空间别名
+using UnityDebug = UnityEngine.Debug; // 解决Debug歧义
 
 namespace MusicGame.SelectMusic.Utils
 {
@@ -24,7 +24,7 @@ namespace MusicGame.SelectMusic.Utils
 
             if (banner == null)
             {
-                var defaultPath = System.IO.Path.Combine(Model.GameConst.BANNER_PATH, bannerFilename);
+                var defaultPath = System.IO.Path.Combine(GameConstNS.BANNER_PATH, bannerFilename); // 引用正确的GameConst命名空间
                 banner = Resources.Load<Sprite>(defaultPath);
             }
 
@@ -42,7 +42,7 @@ namespace MusicGame.SelectMusic.Utils
 
             if (request == null)
             {
-                var defaultPath = System.IO.Path.Combine(Model.GameConst.AUDIO_PATH, audioFilename);
+                var defaultPath = System.IO.Path.Combine(GameConstNS.AUDIO_PATH, audioFilename); // 引用正确的GameConst命名空间
                 request = Resources.LoadAsync<AudioClip>(defaultPath);
             }
 
@@ -54,7 +54,7 @@ namespace MusicGame.SelectMusic.Utils
             CanvasGroup canvasGroup = GameObject.FindObjectOfType<CanvasGroup>();
             if (canvasGroup == null)
             {
-                Debug.LogWarning("Utils.FadeOut: 找不到CanvasGroup");
+                UnityDebug.LogWarning("Utils.FadeOut: 找不到CanvasGroup"); // 替换为UnityDebug避免歧义
                 onComplete?.Invoke();
                 return;
             }
