@@ -1,13 +1,14 @@
-﻿using System.Collections;
-using MusicGame.SelectMusic.Model;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Model = MusicGame.SelectMusic.Model;
 
-public class NoteObject
+namespace MusicGame.Game
 {
-    public GameObject gameObject;
-    public Collider collider;
-    public Note note;
-    public Vector3 spawnPosition;
-    public Vector3 targetPosition;
+    public class NoteObject
+    {
+        public GameObject gameObject;
+        public Collider collider;
+        public Model.Note note;
+        public Vector3 spawnPosition;
+        public Vector3 targetPosition;
+    }
 }

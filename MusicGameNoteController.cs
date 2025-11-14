@@ -1,4 +1,4 @@
-using MusicGame.Core;
+using MusicGame.SelectMusic.Model;
 using System;
 using UnityEngine;
 using UnityDebug = UnityEngine.Debug; // Ω‚æˆDebug∆Á“Â

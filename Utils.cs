@@ -4,8 +4,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UIImage = UnityEngine.UI.Image;
-using GameConstNS = MusicGame.SelectMusic.Utils.GameConst; // 修正GameConst命名空间别名
-using UnityDebug = UnityEngine.Debug; // 解决Debug歧义
+using GameConstNS = MusicGame.SelectMusic.Utils.GameConst;
+using UnityDebug = UnityEngine.Debug;
 
 namespace MusicGame.SelectMusic.Utils
 {
@@ -19,30 +19,29 @@ namespace MusicGame.SelectMusic.Utils
             if (string.IsNullOrEmpty(bannerFilename))
                 return defaultImage?.sprite;
 
-            var customPath = System.IO.Path.Combine(CustomCoverFolder, bannerFilename);
+            var customPath = System.IO.Path.Combine(CustomCoverFolder, bannerFilename).Replace("\\", "/");
             var banner = Resources.Load<Sprite>(customPath);
 
             if (banner == null)
             {
-                var defaultPath = System.IO.Path.Combine(GameConstNS.BANNER_PATH, bannerFilename); // 引用正确的GameConst命名空间
+                var defaultPath = System.IO.Path.Combine(GameConstNS.BANNER_PATH, bannerFilename).Replace("\\", "/");
                 banner = Resources.Load<Sprite>(defaultPath);
             }
 
             return banner ?? defaultImage?.sprite;
         }
 
-
         public static ResourceRequest LoadAudioAsync(string audioFilename)
         {
             if (string.IsNullOrEmpty(audioFilename))
                 return null;
 
-            var customPath = System.IO.Path.Combine(CustomAudioFolder, audioFilename);
+            var customPath = System.IO.Path.Combine(CustomAudioFolder, audioFilename).Replace("\\", "/");
             var request = Resources.LoadAsync<AudioClip>(customPath);
 
-            if (request == null)
+            if (request == null || request.asset == null)
             {
-                var defaultPath = System.IO.Path.Combine(GameConstNS.AUDIO_PATH, audioFilename); // 引用正确的GameConst命名空间
+                var defaultPath = System.IO.Path.Combine(GameConstNS.AUDIO_PATH, audioFilename).Replace("\\", "/");
                 request = Resources.LoadAsync<AudioClip>(defaultPath);
             }
 
@@ -54,7 +53,7 @@ namespace MusicGame.SelectMusic.Utils
             CanvasGroup canvasGroup = GameObject.FindObjectOfType<CanvasGroup>();
             if (canvasGroup == null)
             {
-                UnityDebug.LogWarning("Utils.FadeOut: 找不到CanvasGroup"); // 替换为UnityDebug避免歧义
+                UnityDebug.LogWarning("Utils.FadeOut: 找不到CanvasGroup");
                 onComplete?.Invoke();
                 return;
             }

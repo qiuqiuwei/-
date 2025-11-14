@@ -5,20 +5,20 @@ using UnityEngine;
 namespace MusicGame.SelectMusic.Model
 {
     /// <summary>
-    /// ��������ö�٣�ȫ��Ψһ���壩
+    /// 音符类型枚举（全项目统一）
     /// </summary>
     public enum NoteType
     {
-        Circle,   // ��������
-        Slider,   // ����
-        Spinner,  // ��ת
-        Hit,      // ����
-        Slide,    // ���ݾ�����
-        Unknown   // δ֪���ͣ���ѡ��չ��
+        Circle,   // 基础点击
+        Slider,   // 滑动
+        Spinner,  // 旋转
+        Hit,      // 打击
+        Slide,    // 兼容旧类型
+        Unknown   // 未知（扩展保底）
     }
 
     /// <summary>
-    /// ������ɫģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// 简化颜色模型（全项目统一）
     /// </summary>
     [Serializable]
     public class SimpleColor
@@ -39,7 +39,7 @@ namespace MusicGame.SelectMusic.Model
     }
 
     /// <summary>
-    /// ��������ģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// 音符数据模型（全项目统一）
     /// </summary>
     [Serializable]
     public class Note
@@ -48,15 +48,15 @@ namespace MusicGame.SelectMusic.Model
         public int y;
         public float time;
         public NoteType type;
-        public float speed;        // �����ƶ��ٶȣ���Coreģ�����ݣ�
-        public SimpleColor color;  // ������ʾ��ɫ����Coreģ�����ݣ�
-        public float length;       // ����/�������ȣ�Sliderר�ã�
-        public int repeat;         // �����ظ�������Sliderר�ã�
-        public float endTime;      // ����ʱ�䣨Spinnerר�ã�
+        public float speed;        // 可选字段
+        public SimpleColor color;  // 可选字段
+        public float length;       // Slider 专用
+        public int repeat;         // Slider 专用
+        public float endTime;      // Spinner 专用
     }
 
     /// <summary>
-    /// ����ģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// 单个谱面（Beatmap）
     /// </summary>
     [Serializable]
     public class Beatmap
@@ -65,12 +65,12 @@ namespace MusicGame.SelectMusic.Model
         public SimpleColor difficultyDisplayColor;
         public string creator;
         public string version;
-        public int difficulty;     // �Ѷ���ֵ����Coreģ�����ݣ�
+        public int difficulty;
         public List<Note> noteList = new List<Note>();
     }
 
     /// <summary>
-    /// ����ģ�ͣ�ȫ��Ψһ���壬ȷ�����л�����Ψһ��
+    /// 音乐条目（Music）
     /// </summary>
     [Serializable]
     public class Music

@@ -6,9 +6,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using Model = MusicGame.SelectMusic.Model;
 using RuntimeDataNS = MusicGame.SelectMusic.Utils.RuntimeData;
-using GameConstNS = MusicGame.SelectMusic.Utils.GameConst; // 新增GameConst命名空间别名
+using GameConstNS = MusicGame.SelectMusic.Utils.GameConst;
 using UnityDebug = UnityEngine.Debug;
 using Utils = MusicGame.SelectMusic.Utils;
+using MusicGame.SelectMusic; // 引用集中定义的 MusicUIItem
 
 namespace MusicGame.SelectMusic.Manager
 {
@@ -70,7 +71,7 @@ namespace MusicGame.SelectMusic.Manager
         private void LoadMusicList()
         {
             musicList.Clear();
-            TextAsset[] assets = Resources.LoadAll<TextAsset>(GameConstNS.BEATMAP_PATH); // 修正GameConst引用
+            TextAsset[] assets = Resources.LoadAll<TextAsset>(GameConstNS.BEATMAP_PATH);
             if (assets == null || assets.Length == 0)
             {
                 UnityDebug.LogError($"未找到谱面资源，路径：{GameConstNS.BEATMAP_PATH}");
@@ -405,7 +406,7 @@ namespace MusicGame.SelectMusic.Manager
             RuntimeDataNS.selectedMusicIndex = focusIndex;
             RuntimeDataNS.selectedBeatmapIndex = beatmapIndex;
 
-            Utils.FadeOut(1f, () => SceneManager.LoadScene("Game"));
+            Utils.FadeOut(1f, () => UnityEngine.SceneManagement.SceneManager.LoadScene("Game"));
         }
 
         private void CheckBackToStartup()
@@ -418,20 +419,7 @@ namespace MusicGame.SelectMusic.Manager
             if (backingToStartup) return;
 
             backingToStartup = true;
-            Utils.FadeOut(1f, () => SceneManager.LoadScene("Startup"));
+            Utils.FadeOut(1f, () => UnityEngine.SceneManagement.SceneManager.LoadScene("Startup"));
         }
-    }
-
-    public class MusicUIItem
-    {
-        public GameObject gameObject;
-        public Transform transform;
-        public Model.Music music;
-        public int beatmapIndex;
-        public UnityEngine.UI.Image albumImage;
-        public CanvasGroup textGroup;
-        public UnityEngine.UI.Text titleLabel;
-        public UnityEngine.UI.Text artistLabel;
-        public UnityEngine.UI.Text difficultyLabel;
     }
 }

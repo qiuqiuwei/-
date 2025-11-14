@@ -1,8 +1,7 @@
-using System.Diagnostics;
-using UnityEngine;
-using CoreNote = MusicGame.Core.Note; // Ã÷È·ÒıÓÃÕıÈ·µÄNoteÀàĞÍÃüÃû¿Õ¼ä
-using MusicGame.Game;
+ï»¿using UnityEngine;
+using Model = MusicGame.SelectMusic.Model;
 using UnityDebug = UnityEngine.Debug;
+using MusicGame.Game;
 
 public class NoteSpawner : MonoBehaviour
 {
@@ -15,23 +14,23 @@ public class NoteSpawner : MonoBehaviour
     {
         musicStartTime = Time.time;
 
-        // ³õÊ¼»¯²âÊÔÒô·û£¨Ê¹ÓÃCoreNoteÀàĞÍ£©
-        CoreNote testNote = new CoreNote
+        // ç¤ºä¾‹ï¼šä½¿ç”¨ Model.Note ç”Ÿæˆä¸€ä¸ªæµ‹è¯•éŸ³ç¬¦
+        Model.Note testNote = new Model.Note
         {
             x = 3,
             time = 2f,
-            type = CoreNote.NoteType.Circle // È·±£Ã¶¾ÙÃû³ÆÓëCore.NoteÒ»ÖÂ
+            type = Model.NoteType.Circle
         };
 
         SpawnNote(testNote);
     }
 
-    // Éú³ÉÒô·û£¨²ÎÊıÎªCoreNoteÀàĞÍ£©
-    public void SpawnNote(CoreNote noteData)
+    // ä½¿ç”¨ Model.Note ä½œä¸ºè¾“å…¥ç±»å‹
+    public void SpawnNote(Model.Note noteData)
     {
         if (notePrefab == null)
         {
-            UnityDebug.LogError("Òô·ûÔ¤ÖÆÌåÎ´¸³Öµ£¡");
+            UnityDebug.LogError("notePrefab æœªèµ‹å€¼");
             return;
         }
 
@@ -39,16 +38,14 @@ public class NoteSpawner : MonoBehaviour
         NoteController noteController = noteObj.GetComponent<NoteController>();
         if (noteController == null)
         {
-            UnityDebug.LogError("Òô·ûÔ¤ÖÆÌåÎ´¹ÒÔØNoteController½Å±¾£¡");
+            UnityDebug.LogError("notePrefab ç¼ºå°‘ NoteController ç»„ä»¶");
             Destroy(noteObj);
             return;
         }
 
-        // ¼ÆËãÉú³ÉÎ»ÖÃ
         Vector3 spawnPos = new Vector3(GetTrackXPosition(noteData.x), 0, judgeLinePosition.z + 10f);
         noteObj.transform.position = spawnPos;
 
-        // ³õÊ¼»¯Òô·û¿ØÖÆÆ÷
         noteController.Initialize(
             noteData: noteData,
             musicStart: musicStartTime,
@@ -82,6 +79,6 @@ public class NoteSpawner : MonoBehaviour
             < 0.5f => "Bad",
             _ => "Miss"
         };
-        UnityDebug.Log($"¹ìµÀ {trackIndex + 1}£º{judgeResult}£¨¾«¶È£º{accuracy:F3}Ãë£©");
+        UnityDebug.Log($"è½¨é“ {trackIndex + 1} åˆ¤å®š: {judgeResult} ç²¾åº¦: {accuracy:F3}s");
     }
 }

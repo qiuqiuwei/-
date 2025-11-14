@@ -1,8 +1,7 @@
 ﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using MusicGame.SelectMusic; // 修正命名空间引用，精确到Utils所在的子命名空间
+using MusicGame.SelectMusic.Utils;
 
 public class StartupManager : MonoBehaviour
 {
@@ -141,7 +140,6 @@ public class StartupManager : MonoBehaviour
     {
         transform.DOScale(0, 1f).OnComplete(() =>
         {
-            // 此时Utils已可正常访问
             Utils.FadeOut(1f, () => SceneManager.LoadScene(sceneName));
         });
     }
@@ -149,7 +147,6 @@ public class StartupManager : MonoBehaviour
     private void ExitGame()
     {
         _hasMadeChoice = true;
-        // 此时Utils已可正常访问
         Utils.FadeOut(1f, () => Application.Quit());
     }
 
